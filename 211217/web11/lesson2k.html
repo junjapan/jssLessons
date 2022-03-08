@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSレッスン</title>
+</head>
+<body>
+    <table id="table" border="1"></table>
+    <script>
+        window.onload=function(){
+            const eleTable=document.getElementById('table');
+            for(let i=1;i<=9;i++){
+                const tr=document.createElement('tr');
+                for(let j=1;j<=9;j++){
+                    const td=document.createElement('td');
+                    td.textContent=`${i}×${j}=`;
+                    // 独自プロパティを作れる。以下における独自プロパティは、
+                    // tdへの独自プロパティとしてx,yを設定してる。
+                    td.x=i;
+                    td.y=j;
+                    td.ans=i*j;
+                    td.addEventListener(
+                        "mouseenter",
+                        //以下は匿名関数
+                        function(){
+                            this.style.textDecoration="underline";
+                        }
+                    );
+                    td.addEventListener(
+                        "mouseleave",
+                        //以下は匿名関数
+                        function(){
+                            this.style.textDecoration="none";
+                        }
+                    );
+                    td.addEventListener(
+                        "click",
+                        //以下関数は登録なので()が無い
+                        //実行の場合は()が必要
+                        check
+                    );
+                    tr.appendChild(td);
+                }
+                eleTable.appendChild(tr);
+            }
+            /*
+            ・functionの別の記法について
+            以下だとwindow.objectを指してしまう
+            const check=()=>{
+            };
+            指定するタグを操作する場合は、以下にする必要あり
+            const check=(eve)=>{
+            };
+            */
+            function check(){
+                console.dir(this);
+                let userAns=window.prompt(`${this.x}×${this.y}=`);
+                if(this.ans== parseInt(userAns)){
+                    this.style.backgroundColor="lightgreen";
+                }else{
+                    this.style.backgroundColor="pink";
+                }
+                this.textContent=`${this.x}×${this.y}=${userAns}`
+            }
+            console.dir("out:"+this);
+        }
+    </script>
+</body>
+</html>

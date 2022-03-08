@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsレッスン</title>
+</head>
+<body>
+    <table border="1" id="table"></table>
+    <script>
+        window.onload=function(){
+            let table=document.getElementById("table");
+            for(let i=1;i<=9;i++){
+                let tr=document.createElement("tr");
+                for(let j=1;j<=9;j++){
+                    let td=document.createElement("td");
+                    td.textContent=`${i}×${j}`;
+                    td.x=i;
+                    td.y=j;
+                    td.ans=i*j;
+                    td.addEventListener("mouseenter",function(){
+                        this.style.textDecoretion="underline";
+                    });
+                    td.addEventListener("mouseleave",function(){
+                        this.style.textDecoretion="none";
+                    });
+                    td.addEventListener("click",function(){
+                        const userAns=window.prompt(`${this.x}×${this.y}=`);
+                        if(this.ans===parseInt(userAns)){
+                            this.style.backgroundColor="lightgreen";
+                        }else{
+                            this.style.backgroundColor="pink";
+                        }
+                    });
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+        };
+    </script>
+</body>
+</html>

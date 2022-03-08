@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>13円充填パズル</title>
+  <script>
+    let canvas,context;//キャンバス
+    const circles=new Array(13);//円の座標を管理
+    let index=-1;//円のインデックス
+    let dx,dy,ox,oy;//座標の差分、もとの座標
+    let isTouch=false;//接触しているか？
+    const r=20;//円の半径
+    const w=r*19;//黒いステージの大きさ(究極は18.53)
+    //初期の円の中心座標
+    const pos=[
+      [50,50],
+      [110,55],
+      [180,60],
+      [260,65],
+      [350,70],
+      [70,140],
+      [180,160],
+      [300,170],
+      [80,260],
+      [210,290],
+      [350,300],
+      [100,400],
+      [270,430],
+    ];
+
+    const init=()=>{
+      canvas = document.getElementById("board");
+      context=canvas.getContext("2d");
+      context.font = "16px sans-serif";
+      context.textAlign="center";
+      context.textBaseline="middle";
+      //円の初期化
+      initCircle();
+      //マウスイベント
+      canvas.addEventListener("mousedown",selectCircle);
+      canvas.addEventListener("mousemove",moveCircle);
+      canvas.addEventListener("mouseup",setCircle);
+      canvas.addEventListener("mouseleave",setCircle);
+    };
+
+    const initCircle=()=>{
+      //初期化
+      document.getElementById("score").textContent=0;
+      document.getElementById("message").textContent="";
+      for(let i=0;i<13;i++){
+        //[cx,cy,cr]初期の円の中心座標と半径。wは黒い部分の幅。0.5乗は平方根
+        //１つ目の面積を1とした場合、2つ目2,3つ目3,13個目は13になるように半径を設定
+        circles[i] = [pos[i][0]+w,pos[i][1],Math.floor(r* (i+1)**0.5)];
+      }
+      draw();
+    };
+
+    const drawCircle=(n,colorType = "default") =>{
+      //円、番号の描画
+      const [cx,cy,cr] = circles[n];
+      let [color,l]=["#000000",80];//線:黒,塗りつぶし輝度80%
+      if(colorType == "ok"){
+        [color,l]=["#00FF00",80]//線:緑,塗りつぶし輝度80%;
+      }else if(colorType == "ng"){
+        [color,l]=["#FF0000",100];//線:赤,塗りつぶし輝度100%
+      }
+      context.beginPath();
+      //arc(中点x,中点y,半径,開始角度,終了角度)
+      context.arc(cx,cy,cr,0,Math.PI*2);
+      //円の色(色相、彩度、輝度)
+      context.fillStyle=`hsl(${Math.floor(n/13*360)},100%,${l}%)`;
+      context.fill();
+      //円の線の色
+      context.strokeStyle=color;
+      context.stroke();
+      //数字を描画
+      context.fillStyle="#000000";
+      context.fillText(n+1,cx,cy);
+    };
+
+    const draw = ()=>{
+      //キャンバスを初期化
+      context.clearRect(0,0,canvas.width,canvas.height);
+      //黒を設定
+      context.fillStyle="#000000";
+      //黒で塗りつぶし
+      context.fillRect(10,10,w,w);
+      //移動していない円の描画
+      for(let i=0;i<13;i++){
+        if(i != index) drawCircle(i);
+      }
+      //移動中の円の描画
+      if(index > -1){
+        //基本はcolorTypeはok
+        let colorType="ok";
+        //もし、触れていたらng
+        if(isTouch) colorType="ng";
+        drawCircle(index,colorType);
+      }
+    };
+    //どの円を選択しているか？(選択中の円をindexで表す)
+    //マウスを押し下げしたときに走る
+    const selectCircle = event =>{
+      //キャンバス上のマウスの位置を取得
+      const [x,y] = getPoint(event);
+      //すべての円に対してチェック
+      for(let i=0;i<13;i++){
+        //円の中心座標の取得
+        [ox,oy] = [circles[i][0],circles[i][1]];
+        //現在のマウスの位置からのx、yオフセット量
+        [dx,dy]=[x-ox,y-oy];
+        //3平方の定理から距離dを求める
+        const d = (dx**2 + dy**2) ** 0.5;
+        //dがその円の半径よりも短かったらその円を選択している。
+        if(d < ((i+1)**0.5)*r){
+          index=i;
+          break;
+        }
+      }
+      //選択されていたら描画を更新
+      if(index > -1) draw();
+    };
+    //マウスをドラッグしたときに発火
+    const moveCircle= event =>{
+      //現在のキャンバス上のマウスの位置
+      const [x,y] = getPoint(event);
+      //ドラッグ中だったら
+      if(index > -1){
+        //マウスの位置からdx,dyを引くことによって円の中心座標、circles[index][2]は半径
+        const [x0,y0,r0] =[x-dx,y-dy,circles[index][2]];
+        //枠との接触チェック
+        isTouch=false;
+        //黒枠からはみ出てたらtrue(10はpadding,wは黒四角の幅)
+        if((x0-r0 <= 10)|| (x0+r0 >= w+10)) isTouch = true;//横判定
+        if((y0-r0 <= 10)|| (y0+r0 >= w+10)) isTouch = true;//縦判定
+        //キャンバス内かつ黒枠のそとだったらfalse
+        if((x0-r0 > w+10) && (x0+r0 < canvas.width)) isTouch=false;
+        //キャンバス下部分のフリーエリアだったらfalse
+        if((x0 -r0 > 0)&& (x0+r0 < canvas.width) 
+        && (y0-r0 > w+10)&& (x0+r0 < canvas.height)) isTouch=false;
+        //キャンバスから上下のはみだしたらtrue
+        if((y0-r0 <= 0)||(y0+r0 >= canvas.height)) isTouch=true;
+        //他の円との接触チェック
+        for(let i=0;i<13;i++){
+          //すべての円の中心座標、半径を取得
+          const [x1,y1,r1] = circles[i];
+          //もし、自分でなかったら
+          if(i != index){
+            //三平方の定理で距離を測定
+            d = ((x0-x1) ** 2 + (y0-y1) ** 2)**0.5;
+            //自分の半径と相手の半径を足した距離よりも短ければ接触
+            if(d< r0+r1){
+              isTouch = true;
+              break;
+            }
+          }
+        }
+        //配列の位置座標を更新
+        circles[index] = [x0,y0,r0];
+        //描画
+        draw();
+      }
+    };
+    //ドラッグが終わったときとキャンバスからマウスが出ていったときに発火
+    const setCircle = event =>{
+      //isTouchかつ選択されていたら
+      if((isTouch)&&(index> -1)){
+        //元あった場所に座標を戻す
+        [circles[index][0],circles[index][1]] = [ox,oy];
+      }
+      //未選択にする
+      index = -1;
+      //描画
+      draw();
+      //判定
+      let score=0;
+      for(let i=0;i<13;i++){
+        const [x0,y0,r0] = circles[i];
+        //黒枠に収まっていたら
+        if((x0-r0 > 10)&&(x0+r0 < w+10)&&(y0-r0 >10)&&(y0+r0 < w+10)){
+          score += i+1;//その円の番号分加算
+        }
+      }
+      //domの更新
+      document.getElementById("score").textContent=score;
+      document.getElementById("message").textContent="";
+      //全部収まったらclear!
+      if(score==91){
+        document.getElementById("message").textContent="Clear!!";
+      }
+    };
+    //現在のマウス座標をキャンバス座標に変換する処理
+    const getPoint = event =>{
+      //キャンバスの矩形情報を取得
+      const canvasRect = canvas.getBoundingClientRect();
+      //キャンバス上のマウス座標の取得
+      const x = event.clientX - canvasRect.left;
+      const y=event.clientY - canvasRect.top;
+      return [x,y];
+    };
+  </script>
+  <style>
+  #message{color:#FF0000;}
+  canvas{
+    border: thin solid #000000;
+    background-color:#FFFFEE;
+  }
+  </style>
+</head>
+<body onload="init()">
+<p>13円充填パズル</p>
+<input type="button" id="reset" value="リセット" onclick="initCircle()">
+SCORE:<span id="score">0</span>
+<span id="message"></span>
+<hr>
+<canvas id="board" width="800" height="600"></canvas>
+</body>
+</html>

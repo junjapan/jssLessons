@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="result"></div>
+<script>
+    //var let スコープの違い。letはブロック単位
+    let x=10;
+    /*
+    console.log(typeof(x));
+    x="hello";
+    console.log(typeof(x));
+    console.log(x);
+    */
+    let y=20;
+    let z=x+y;
+    let str="x+y="+z;
+    console.log(str);
+    //DOM(Document Object Model)の操作が出来る
+    //JSの最大の特徴
+    const ele=document.getElementById("result");
+    ele.textContent=str;
+    console.dir(ele);
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsレッスン</title>
+</head>
+<body>
+    <button onclick="btWrite()">書く</button>
+    <button onclick="btCheck()">長さ見る</button>
+    <div id="result"></div>
+    <script>
+        const result=document.getElementById("result");
+        class Pen{
+            constructor(length){
+                this.length=length;
+            }
+            write(){
+                this.length-=0.5;
+                return '書きました';
+            }
+        }
+        let pen=new Pen(3);
+        const btWrite=()=>{
+            let msg=pen.write();
+            result.textContent=msg;
+        };
+        const btCheck=()=>{
+            result.textContent=`長さは${pen.length}です。`;
+        };
+        let slime={
+            name:'スラキチ',
+            hp:10
+        };
+        console.log(slime.name);
+        console.log(slime.hp);
+        slime.mp=30;
+        console.log(slime.mp);
+        class Slime{
+            constructor(name,hp){
+                this.name=name;
+                this.hp=hp;
+            }
+            sayHello(){
+                return `こんにちは${this.name}さん`;
+            }
+        }
+        let slime1=new Slime('スラボー',12);
+        slime1.mp=30;
+        let slime2=new Slime('スラオ',13);
+        console.log(slime1.name +""+ slime2.name + "" +slime1.sayHello());
+        let slimes=[slime1,slime2];
+        slimes.push(new Slime('スラ子',23));
+        console.log(slimes);
+        // for(let i=0;i<slimes.length;i++){
+        // }
+        console.log(slimes[1].sayHello());
+
+        slimes.forEach((s)=>console.log(s.sayHello()));
+        let removed=slimes.pop();
+        console.log(removed.name);
+        slimes.forEach((s)=>console.log(s.sayHello()));
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsレッスン</title>
+</head>
+<body>
+    <button id="bt">click</button>
+    <div id="result"></div>
+    <script>
+        var isOk = false;
+        window.onload=function(){
+            const ele=document.getElementById("bt");
+            const result=document.getElementById("result");
+            ele.addEventListener(
+                "click",function(){
+                    // window.alert("Click!!!");
+                    // result.textContent="";
+                    isOk = window.confirm("ほんとによろしいですか");
+                    console.log("alert:"+isOk);
+                }
+            );
+            ele.addEventListener(
+                "click",function(){
+                    console.log("result:"+isOk);
+                    if(isOk == true){
+                        result.textContent="Clicked!";
+                    }
+                }
+            );
+        }
+    </script>
+</body>
+</html>

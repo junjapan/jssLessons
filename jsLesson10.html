@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsレッスン</title>
+</head>
+<body>
+    <button id="a" onclick="myHandler(event)">A</button>
+    <button id="b" onclick="myHandler(event)">B</button>
+    <div id="result"></div>
+    <script>
+        // window.onload=function(){
+        //     document.getElementById("a").onclick=myHandler;
+        //     document.getElementById("b").onclick=myHandler;
+        // };
+        // var ファンクションスコープ、let ブロックスコープ
+        function myHandler(e){
+            var x=100;
+            console.log("func x:"+x);
+            console.dir(e);
+            document.getElementById("result").textContent=e.target.textContent+"が選ばれた";
+        }
+        var x=10;
+        console.log("out func x:"+x);
+    </script>
+</body>
+</html>

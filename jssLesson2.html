@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Document</title>
+</head>
+<body>
+<input type="text" id="itAge" value="" placeholder="Enter your age">
+<button onclick="hoge()">Check!</button>
+<div id="result"></div>
+<script>
+ function btCheck(){
+     let age=document.getElementById("itAge").value;
+     console.dir(itAge);
+     age=parseInt(age);
+     itAge.style.color="red";
+     let str;
+     if(age >= 20){
+         str="おとな";
+     }else{
+         str="こども";
+     }
+         document.getElementById("result").textContent=str;
+ }
+// const btCheck=()=>{
+//         let age=document.getElementById("itAge").value;
+//         age=parseInt(age);
+//         let str;
+//         if(age >= 20){
+//             str="おとな";
+//         }else{
+//             str="こども";
+//         }
+//         document.getElementById("result").textContent=str;
+// };
+    let hoge=btCheck;
+</script>
+</body>
+</html>

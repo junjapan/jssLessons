@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSレッスン</title>
+</head>
+<body>
+    <button id="btn">追加</button>
+    <ol id="list"></ol>
+    <script>
+        const ol=document.getElementById('list');
+        const btn=document.getElementById('btn');
+        let count=0;
+        btn.addEventListener('click',
+            ()=>{
+                const li=document.createElement('li');
+                li.textContent='Item'+(++count);
+                ol.appendChild(li);
+            }
+        );
+    </script>
+</body>
+</html>
